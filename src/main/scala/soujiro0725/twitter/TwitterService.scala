@@ -4,31 +4,21 @@ import com.typesafe.scalalogging.Logger
 import twitter4j._
 
 trait TwitterService {
-  val twitterService: TwitterService
+  val twitterAPI: TwitterAPI
 
-  class Twitter {
+  /**
+    * to hide implementation, define API as an inner class
+    */
+  class TwitterAPI {
     private[this] val logger = Logger[TwitterService]
 
-    def streamByTrack():Unit = {
+    def streamByTrack(tracks: Seq[String], listener: StatusListener): Unit = {
+      val twitterStream = new TwitterStreamFactory().getInstance()
+      twitterStream.addListener(listener)
 
+      val query = new FilterQuery()
+        .track(tracks: _*)
+      twitterStream.filter(query)
     }
-
-    def streamByList():Unit = {
-
-    }
-
-    def getUserListMembers():Seq[User] = {
-
-    }
-
-    def getStatus():Status = {
-
-    }
-
-    def getFavorites[U]():Unit = {
-
-    }
-
-    
   }
 }
