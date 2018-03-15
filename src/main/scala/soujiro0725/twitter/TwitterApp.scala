@@ -2,7 +2,7 @@ package com.soujiro0725.twitter
 
 trait TwitterApp {
 
-  this: TwitterService
+  this: TwitterService =>
 
   val app: TwitterStream
 
