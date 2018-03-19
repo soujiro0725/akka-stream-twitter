@@ -16,8 +16,7 @@ trait TwitterService {
       val twitterStream = new TwitterStreamFactory().getInstance()
       twitterStream.addListener(listener)
 
-      val query = new FilterQuery()
-        .track(tracks: _*)
+      val query = new FilterQuery().track(tracks: _*)
       twitterStream.filter(query)
     }
   }

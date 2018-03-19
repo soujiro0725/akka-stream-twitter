@@ -29,7 +29,14 @@ class StatusListenerImpl extends StatusListener {
   }
 
   override def onStatus(status: Status): Unit = {
-    logger.info("onStatus running...")
+    val actualStatus = if(status.isRetweet) {
+      status.getRetweetedStatus
+    } else {
+      status
+    }
+    val url = s"https://twitter.com/${actualStatus.getUser.getScreenName}/status/${actualStatus.getId}"
+    val mediaUrls = actualStatus.getMediaEntities.map(e => s"${e.getMediaURLHttps}:orig")
+    logger.info(s"onStatus: $url , ${mediaUrls.mkString(", ")}")
   }
 
   override def onException(ex: Exception): Unit = {
