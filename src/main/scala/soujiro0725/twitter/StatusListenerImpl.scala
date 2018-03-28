@@ -36,7 +36,7 @@ class StatusListenerImpl extends StatusListener {
     }
     val url = s"https://twitter.com/${actualStatus.getUser.getScreenName}/status/${actualStatus.getId}"
     val mediaUrls = actualStatus.getMediaEntities.map(e => s"${e.getMediaURLHttps}:orig")
-    logger.info(s"onStatus: $url , ${mediaUrls.mkString(", ")}")
+    //logger.info(s"onStatus: $url , ${mediaUrls.mkString(", ")}")
   }
 
   override def onException(ex: Exception): Unit = {

@@ -3,11 +3,12 @@ package com.soujiro0725.twitter
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, GraphDSL, RunnableGraph, Sink, Source}
 import akka.stream.{ActorMaterializer, OverflowStrategy}
-
+import com.typesafe.scalalogging.Logger
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import twitter4j.{User, Status}
 
-case class Tweet(statusId, Long, user: User, uris: Iterable[String])
+case class Tweet(statusId: Long, user: User, uris: Iterable[String])
 
 trait TwitterApp {
 
@@ -33,7 +34,11 @@ trait TwitterApp {
         logger.info(s"https://twitter.com/${mt.user.getScreenName}/status/${mt.statusId}, ${mt.uris}")
       }
 
-      val streamQueue = src.via(flows.doSomething).to(sink).run()
+      val streamQueue = source.via(flow).to(sink).run()
+
+      def onStatus(status: Status): Unit = {
+        streamQueue.offer(status)
+      }
 
       twitterAPI.streamByTrack(Seq("nba", "nytimes"), new StatusListenerImpl())
     }
