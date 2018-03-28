@@ -23,6 +23,12 @@ trait TwitterApp {
       println("running twitter app ...")
 
       val source = Source.queue[Status](8, OverflowStrategy.backpressure)
+      val flow = Flow
+      val sink = Sink.foreach[Tweet] { mt =>
+        logger.info(s"https://twitter.com/${mt.user.getScreenName}/status/${mt.statusId}, ${mt.uris}")
+      }
+
+      val streamQueue = src.via(flows.doSomething).to(sink).run()
 
       twitterAPI.streamByTrack(Seq("nba", "nytimes"), new StatusListenerImpl())
     }
