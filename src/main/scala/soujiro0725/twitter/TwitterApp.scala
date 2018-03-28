@@ -40,7 +40,9 @@ trait TwitterApp {
         streamQueue.offer(status)
       }
 
-      twitterAPI.streamByTrack(Seq("nba", "nytimes"), new StatusListenerImpl())
+      twitterAPI.streamByTrack(Seq("nba", "nytimes"), new StatusListenerImpl(Some(onStatus)))
+
+      Await.result(actorSystem.whenTerminated, Duration.Inf)
     }
   }
 }

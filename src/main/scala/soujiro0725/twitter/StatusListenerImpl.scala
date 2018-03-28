@@ -8,7 +8,7 @@ import twitter4j.{
   StallWarning
 }
 
-class StatusListenerImpl extends StatusListener {
+class StatusListenerImpl(onStatusImpl: Option[(Status => Unit)] = None) extends StatusListener {
 
   private[this] val logger = Logger[StatusListenerImpl]
 
@@ -29,14 +29,19 @@ class StatusListenerImpl extends StatusListener {
   }
 
   override def onStatus(status: Status): Unit = {
-    val actualStatus = if(status.isRetweet) {
-      status.getRetweetedStatus
-    } else {
-      status
+    onStatusImpl match {
+      case Some(impl) =>
+        impl(status)
+      case None =>
+        val actualStatus = if(status.isRetweet) {
+          status.getRetweetedStatus
+        } else {
+          status
+        }
+        val url = s"https://twitter.com/${actualStatus.getUser.getScreenName}/status/${actualStatus.getId}"
+        val mediaUrls = actualStatus.getMediaEntities.map(e => s"${e.getMediaURLHttps}:orig")
+        //logger.info(s"onStatus: $url , ${mediaUrls.mkString(", ")}")
     }
-    val url = s"https://twitter.com/${actualStatus.getUser.getScreenName}/status/${actualStatus.getId}"
-    val mediaUrls = actualStatus.getMediaEntities.map(e => s"${e.getMediaURLHttps}:orig")
-    //logger.info(s"onStatus: $url , ${mediaUrls.mkString(", ")}")
   }
 
   override def onException(ex: Exception): Unit = {
