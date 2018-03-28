@@ -7,6 +7,8 @@ import akka.stream.{ActorMaterializer, OverflowStrategy}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+case class Tweet(statusId, Long, user: User, uris: Iterable[String])
+
 trait TwitterApp {
 
   this: TwitterService =>
@@ -23,7 +25,10 @@ trait TwitterApp {
       println("running twitter app ...")
 
       val source = Source.queue[Status](8, OverflowStrategy.backpressure)
-      val flow = Flow
+      val flow = Flow.fromFunction((s: Status) => {
+        val uris = s.getExtendedMediaEntities.map { me => me.getMediaURLHttps }.toSeq
+        Tweet(s.getId, s.getUser, uris)
+      })
       val sink = Sink.foreach[Tweet] { mt =>
         logger.info(s"https://twitter.com/${mt.user.getScreenName}/status/${mt.statusId}, ${mt.uris}")
       }
