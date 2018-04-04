@@ -9,6 +9,7 @@ lazy val root = (project in file(".")).
 val akka_version = "2.4.19"
 val twitter_version = "4.0.5"
 val scala_test_version = "3.0.4"
+val stanford_nlp_version = "3.9.1"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akka_version,
   "com.typesafe.akka" %% "akka-testkit" % akka_version % Test,
@@ -21,5 +22,9 @@ libraryDependencies ++= Seq(
 
   "org.scalatest" %% "scalatest" % scala_test_version % "test",
   "org.twitter4j" % "twitter4j-core" % twitter_version,
-  "org.twitter4j" % "twitter4j-stream" % twitter_version
+  "org.twitter4j" % "twitter4j-stream" % twitter_version,
+
+  "edu.stanford.nlp" % "stanford-corenlp" % stanford_nlp_version,
+  "edu.stanford.nlp" % "stanford-corenlp" % stanford_nlp_version classifier "models"
+
 )
