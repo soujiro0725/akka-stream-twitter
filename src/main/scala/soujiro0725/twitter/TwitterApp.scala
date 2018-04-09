@@ -7,6 +7,7 @@ import com.typesafe.scalalogging.Logger
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import twitter4j.{User, Status}
+import com.soujiro0725.twitter.SentimentAnalysisUtils._
 
 case class Tweet(statusId: Long, user: User, uris: Iterable[String])
 
