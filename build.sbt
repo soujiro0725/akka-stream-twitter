@@ -10,6 +10,8 @@ val akka_version = "2.4.19"
 val twitter_version = "4.0.5"
 val scala_test_version = "3.0.4"
 val stanford_nlp_version = "3.9.1"
+val alpakka_version = "0.18"
+
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akka_version,
   "com.typesafe.akka" %% "akka-testkit" % akka_version % Test,
@@ -25,6 +27,8 @@ libraryDependencies ++= Seq(
   "org.twitter4j" % "twitter4j-stream" % twitter_version,
 
   "edu.stanford.nlp" % "stanford-corenlp" % stanford_nlp_version,
-  "edu.stanford.nlp" % "stanford-corenlp" % stanford_nlp_version classifier "models"
+  "edu.stanford.nlp" % "stanford-corenlp" % stanford_nlp_version classifier "models",
+
+  "com.lightbend.akka" %% "akka-stream-alpakka-dynamodb" % alpakka_version
 
 )

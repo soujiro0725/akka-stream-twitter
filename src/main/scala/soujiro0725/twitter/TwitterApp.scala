@@ -68,5 +68,6 @@ trait TwitterApp {
     val sink2 = Sink.foreach[TweetSentiment] { mt =>
       logger.info(s"${mt.sentimentType.toString}")
     }
+
   }
 }
