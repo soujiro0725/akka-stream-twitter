@@ -9,5 +9,7 @@ object Main {
     println("running main function")
     Registry.app.execute()
     log.info("logging now...")
+
+    DBClient
   }
 }
