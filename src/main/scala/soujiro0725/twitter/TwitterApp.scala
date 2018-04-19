@@ -53,6 +53,7 @@ trait TwitterApp {
     })
 
     val analyzeSentiment = Flow.fromFunction((s: Status) => {
+      DBClient
       val st = detectSentiment(s.getText)
       TweetSentiment(st)
     })
