@@ -53,7 +53,6 @@ trait TwitterApp {
     })
 
     val analyzeSentiment = Flow.fromFunction((s: Status) => {
-      DBClient
       val st = detectSentiment(s.getText)
       TweetSentiment(st)
     })
@@ -67,7 +66,12 @@ trait TwitterApp {
     }
 
     val sink2 = Sink.foreach[TweetSentiment] { mt =>
-      logger.info(s"${mt.sentimentType.toString}")
+      val result = DBClient.createTable("twitter-sentiment")
+      println("printing result of creating tables...")
+      println(result)
+      println(DBClient.listTable())
+      DBClient.update(mt.sentimentType.toString)
+      //logger.info(s"${mt.sentimentType.toString}")
     }
 
   }

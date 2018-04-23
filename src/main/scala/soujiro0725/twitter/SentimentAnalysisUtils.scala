@@ -48,8 +48,8 @@ object SentimentAnalysisUtils {
       sentiments += sentiment.toDouble
       sizes += partText.length
 
-      println("debug: " + sentiment)
-      println("size: " + partText.length)
+      // println("debug: " + sentiment)
+      // println("size: " + partText.length)
     }
 
     val averageSentiment: Double = {
@@ -65,9 +65,9 @@ object SentimentAnalysisUtils {
       weightedSentiment = -1
     }
 
-    println("debug: main: " + mainSentiment)
-    println("debug: avg: " + averageSentiment)
-    println("debug: weighted: " + weightedSentiment)
+    // println("debug: main: " + mainSentiment)
+    // println("debug: avg: " + averageSentiment)
+    // println("debug: weighted: " + weightedSentiment)
 
     weightedSentiment match {
       case s if s <= 0.0 => NOT_UNDERSTOOD
