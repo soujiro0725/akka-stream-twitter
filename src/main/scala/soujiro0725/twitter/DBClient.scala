@@ -66,6 +66,12 @@ object DBClient {
     client.single(new ListTablesRequest())
   }
 
+  /**
+    * 
+    * 
+    * 
+    * 
+    */
   def put(tableName: String, data: String) {
     var batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(
       Map(

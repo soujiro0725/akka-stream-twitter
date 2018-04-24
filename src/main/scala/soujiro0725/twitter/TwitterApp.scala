@@ -66,11 +66,12 @@ trait TwitterApp {
     }
 
     val sink2 = Sink.foreach[TweetSentiment] { mt =>
-      val result = DBClient.createTable("twitter-sentiment")
+      val tableName = "twitter-sentiment2"
+      val result = DBClient.createTable(tableName)
       println("printing result of creating tables...")
       println(result)
       println(DBClient.listTable())
-      DBClient.update(mt.sentimentType.toString)
+      DBClient.put(tableName, mt.sentimentType.toString)
       //logger.info(s"${mt.sentimentType.toString}")
     }
 
