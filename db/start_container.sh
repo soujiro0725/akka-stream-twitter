@@ -1,1 +1,1 @@
-docker run -i -t -p 7777:7777 soichi777/dynamodb_local -inMemory -port 7777
+docker run -it -p 7777:8000 soichi777/dynamodb_local

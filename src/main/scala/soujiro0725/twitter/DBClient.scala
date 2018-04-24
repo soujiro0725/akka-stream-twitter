@@ -18,6 +18,11 @@ import scala.concurrent.Future
   * --key-schema AttributeName=Id,KeyType=HASH \
   * --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
   * --endpoint-url http://localhost:32768
+  * 
+  * aws dynamodb list-tables --endpoint-url http://localhost:7777
+  * 
+  * aws dynamodb put-item --endpoint-url http://localhost:7777 --table-name twitter-sentiment --item '{"testId":"1"}'
+
   */
 object DBClient {
 
@@ -27,10 +32,18 @@ object DBClient {
   val settings = DynamoSettings(system)
   val client = DynamoClient(settings)
 
-  def createTable(tableName: String) {
+  val keyCol = "kkey"
+  val sortCol = "sort"
 
-    val keyCol = "kkey"
-    val sortCol = "sort"
+  def S(s: String) = new AttributeValue().withS(s)
+  def N(n: Int) = new AttributeValue().withN(n.toString)
+
+  def keyMap(hash: String, sort: Int): Map[String, AttributeValue] = Map(
+    keyCol -> S(hash),
+    sortCol -> N(sort)
+  )
+
+  def createTable(tableName: String) {
 
     val createTableRequest = new CreateTableRequest()
       .withTableName(tableName)
@@ -53,13 +66,17 @@ object DBClient {
     client.single(new ListTablesRequest())
   }
 
-  def update(data: String) {
-    println("printing table info...")
-
-    // val table = DescribeTable 
-    // println(client.describeTable)
-    // println("printing data...")
-    // println(data)
+  def put(tableName: String, data: String) {
+    var batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(
+      Map(
+        tableName ->
+          List(
+            new WriteRequest(new PutRequest().withItem((keyMap("B", 0) + ("data" -> S(test5data))).asJava)),
+            new WriteRequest(new PutRequest().withItem((keyMap("B", 1) + ("data" -> S(test5data))).asJava)),
+          ).asJava
+      ).asJava
+    )
+    client.single(batchWriteItemRequest)
   }
 
 }
