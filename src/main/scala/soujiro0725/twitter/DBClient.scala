@@ -9,6 +9,7 @@ import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.model._
 import scala.concurrent.Future
+import scala.collection.JavaConverters._
 
 /**
   * export AWS_CREDENTIAL_PROFILES_FILE=~/.aws/credentials
@@ -23,6 +24,7 @@ import scala.concurrent.Future
   * 
   * aws dynamodb put-item --endpoint-url http://localhost:7777 --table-name twitter-sentiment --item '{"testId":"1"}'
 
+  * aws dynamodb scan --table-name twitter-sentiment3 --endpoint-url http://localhost:7777
   */
 object DBClient {
 
@@ -32,8 +34,8 @@ object DBClient {
   val settings = DynamoSettings(system)
   val client = DynamoClient(settings)
 
-  val keyCol = "kkey"
-  val sortCol = "sort"
+  val keyCol = "userId"
+  val sortCol = "sentiment"
 
   def S(s: String) = new AttributeValue().withS(s)
   def N(n: Int) = new AttributeValue().withN(n.toString)
@@ -72,13 +74,13 @@ object DBClient {
     * 
     * 
     */
-  def put(tableName: String, data: String) {
+  def put(tableName: String, data: List[String]) {
     var batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(
       Map(
         tableName ->
           List(
-            new WriteRequest(new PutRequest().withItem((keyMap("B", 0) + ("data" -> S(test5data))).asJava)),
-            new WriteRequest(new PutRequest().withItem((keyMap("B", 1) + ("data" -> S(test5data))).asJava)),
+            new WriteRequest(new PutRequest().withItem((keyMap("B", 0) + ("data" -> S(data(0)))).asJava)),
+            new WriteRequest(new PutRequest().withItem((keyMap("B", 1) + ("data" -> S(data(1)))).asJava)),
           ).asJava
       ).asJava
     )
