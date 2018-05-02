@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+import os
+from flask import send_from_directory
 import boto3
 import json
 from boto3.dynamodb.conditions import Key, Attr
@@ -17,6 +19,8 @@ dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
 
 
 app = dash.Dash()
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 
 dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
 df = pd.read_csv('./data/test.csv', parse_dates=['datetime'])
@@ -40,17 +44,71 @@ min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
 
 app.layout = html.Div([
-    dcc.Graph(id='indicator-graphic'),
-
-    dcc.RangeSlider(
-        id='datetime--slider',
-        min=min,
-        max=max,
-        value=[min, max],
-        marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
+    html.Link(
+        rel='stylesheet',
+        href='/static/stylesheet.css'
     ),
-    html.Div(id='rangeslider-output')
-])
+    html.Link(
+        rel='stylesheet',
+        href='/static/bootstrap.css'
+    ),
+    html.H1(children='dashboard',
+            className='twelve columns'),
+    
+    html.Div([ # row
+        html.Div([
+            html.Div(id='example-graph'),
+            dcc.Graph(
+                id='example-graph',
+                figure={
+                    'data': [
+                        {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
+                        {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+                    ],
+                    'layout': {
+                        'title': 'Graph 1',
+                        'xaxis' : dict(
+                            title='x Axis',
+                            titlefont=dict(
+                                family='Courier New, monospace',
+                                size=20,
+                                color='#7f7f7f'
+                            )),
+                        'yaxis' : dict(
+                            title='y Axis',
+                            titlefont=dict(
+                                family='Helvetica, monospace',
+                                size=20,
+                                color='#7f7f7f'
+                            ))
+                    }
+                }
+            )
+        ], className='six columns'),
+        
+    html.Div([
+        dcc.Graph(id='indicator-graphic'),
+        dcc.RangeSlider(
+            id='datetime--slider',
+            min=min,
+            max=max,
+            value=[min, max],
+            marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
+        ),
+        html.Div(id='rangeslider-output')
+    ], className='six columns')
+    ], className='row')
+],
+                      style={
+                          # 'background-color': '#002b36'
+                      }
+)
+
+@app.server.route('/static/<path:path>')
+def static_file(path):
+    static_folder = os.path.join(os.getcwd(), 'static')
+    print(static_folder)
+    return send_from_directory(static_folder, path)
 
 @app.callback(
     dash.dependencies.Output('rangeslider-output', 'children'),
