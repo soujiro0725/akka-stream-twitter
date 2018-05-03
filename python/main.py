@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 
 import os
-from flask import send_from_directory
-import boto3
 import json
+import boto3
 from boto3.dynamodb.conditions import Key, Attr
-import datetime
+from flask import send_from_directory
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+import datetime
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -43,6 +43,35 @@ def get_marks_from_start_end(start, end):
 min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
 
+
+def graph1(dcc):
+    return dcc.Graph(
+        id='example-graph',
+        figure={
+            'data': [
+                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
+                {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+            ],
+            'layout': {
+                'title': 'Graph 1',
+                'xaxis' : dict(
+                    title='x Axis',
+                    titlefont=dict(
+                        family='Courier New, monospace',
+                        size=20,
+                        color='#7f7f7f'
+                    )),
+                'yaxis' : dict(
+                    title='y Axis',
+                    titlefont=dict(
+                        family='Helvetica, monospace',
+                        size=20,
+                        color='#7f7f7f'
+                    ))
+            }
+        }
+    )
+
 app.layout = html.Div([
     html.Link(
         rel='stylesheet',
@@ -58,32 +87,7 @@ app.layout = html.Div([
     html.Div([ # row
         html.Div([
             html.Div(id='example-graph'),
-            dcc.Graph(
-                id='example-graph',
-                figure={
-                    'data': [
-                        {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-                        {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-                    ],
-                    'layout': {
-                        'title': 'Graph 1',
-                        'xaxis' : dict(
-                            title='x Axis',
-                            titlefont=dict(
-                                family='Courier New, monospace',
-                                size=20,
-                                color='#7f7f7f'
-                            )),
-                        'yaxis' : dict(
-                            title='y Axis',
-                            titlefont=dict(
-                                family='Helvetica, monospace',
-                                size=20,
-                                color='#7f7f7f'
-                            ))
-                    }
-                }
-            )
+            graph1(dcc)
         ], className='six columns'),
         
     html.Div([
@@ -96,13 +100,11 @@ app.layout = html.Div([
             marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
         ),
         html.Div(id='rangeslider-output')
-    ], className='six columns')
+    ], className='six columns', style={'padding':'16px'})
     ], className='row')
-],
-                      style={
-                          # 'background-color': '#002b36'
-                      }
-)
+], style={ # 'background-color': '#002b36'
+})
+
 
 @app.server.route('/static/<path:path>')
 def static_file(path):
