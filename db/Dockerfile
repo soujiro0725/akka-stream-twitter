@@ -1,9 +1,24 @@
-FROM tray/java:8-jre
+FROM java:8
 
-MAINTAINER soujiro0725
+RUN groupadd -r dynamodb && useradd -r -g dynamodb dynamodb
 
-RUN /usr/bin/curl -L https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz | /bin/tar xz
+RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+RUN curl -s -L "https://github.com/tianon/gosu/releases/download/1.6/gosu-$(dpkg --print-architecture)" -o /usr/local/bin/gosu \
+    && curl -s -L "https://github.com/tianon/gosu/releases/download/1.6/gosu-$(dpkg --print-architecture).asc" -o /usr/local/bin/gosu.asc \
+    && gpg --verify /usr/local/bin/gosu.asc \
+    && rm /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu
 
-ENTRYPOINT ["/opt/jdk/bin/java", "-Djava.library.path=./DynamoDBLocal_lib", "-jar", "DynamoDBLocal.jar"]
+RUN mkdir /opt/dynamodb \
+   	&& curl -s -L "http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz" | tar -x -z -C "/opt/dynamodb"
 
-CMD ["-help"]
+WORKDIR /opt/dynamodb
+VOLUME /var/lib/dynamodb
+
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+EXPOSE 8000
+
+CMD ["dynamodb", "-dbPath", "/var/lib/dynamodb", "-port", "8000"]
+    
