@@ -19,15 +19,13 @@ dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
 
 
 app = dash.Dash()
-<<<<<<< HEAD
 css_url = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 app.css.append_css({
     "external_url": css_url
 })
-=======
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
->>>>>>> f04245b7ae335ff55a43b3447de719660774db46
+
 
 dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
 df = pd.read_csv('./data/test.csv', parse_dates=['datetime'])
@@ -50,15 +48,6 @@ def get_marks_from_start_end(start, end):
 min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
 
-<<<<<<< HEAD
-# colors = {
-#     'background': '#111111',
-#     'text': '#ffffff'
-# }
-
-app.layout = html.Div(
-    html.Div([html.H3("Neat H3")], className='col-sm-4' ),
-=======
 
 def graph1(dcc):
     return dcc.Graph(
@@ -106,7 +95,7 @@ app.layout = html.Div([
             graph1(dcc)
         ], className='six columns'),
         
->>>>>>> f04245b7ae335ff55a43b3447de719660774db46
+
     html.Div([
         dcc.Graph(id='indicator-graphic'),
         dcc.RangeSlider(
@@ -116,18 +105,6 @@ app.layout = html.Div([
             value=[min, max],
             marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
         ),
-<<<<<<< HEAD
-        html.Div(id='rangeslider-output'),
-    ],
-    # style={
-    #      'width':'50%',
-    #      'margin':'auto'
-    #      #     'background': colors['background'],
-    #      #     'text':colors['text']
-    #  }
-    )
-)
-=======
         html.Div(id='rangeslider-output')
     ], className='six columns', style={'padding':'16px'})
     ], className='row')
@@ -140,7 +117,7 @@ def static_file(path):
     static_folder = os.path.join(os.getcwd(), 'static')
     print(static_folder)
     return send_from_directory(static_folder, path)
->>>>>>> f04245b7ae335ff55a43b3447de719660774db46
+
 
 @app.callback(
     dash.dependencies.Output('rangeslider-output', 'children'),
