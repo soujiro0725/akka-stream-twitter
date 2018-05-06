@@ -19,10 +19,6 @@ dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
 
 
 app = dash.Dash()
-css_url = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-app.css.append_css({
-    "external_url": css_url
-})
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 
