@@ -17,6 +17,10 @@ dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
 
 
 app = dash.Dash()
+css_url = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+app.css.append_css({
+    "external_url": css_url
+})
 
 dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
 df = pd.read_csv('./data/test.csv', parse_dates=['datetime'])
@@ -39,18 +43,32 @@ def get_marks_from_start_end(start, end):
 min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
 
-app.layout = html.Div([
-    dcc.Graph(id='indicator-graphic'),
+# colors = {
+#     'background': '#111111',
+#     'text': '#ffffff'
+# }
 
-    dcc.RangeSlider(
-        id='datetime--slider',
-        min=min,
-        max=max,
-        value=[min, max],
-        marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
-    ),
-    html.Div(id='rangeslider-output')
-])
+app.layout = html.Div(
+    html.Div([html.H3("Neat H3")], className='col-sm-4' ),
+    html.Div([
+        dcc.Graph(id='indicator-graphic'),
+        dcc.RangeSlider(
+            id='datetime--slider',
+            min=min,
+            max=max,
+            value=[min, max],
+            marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
+        ),
+        html.Div(id='rangeslider-output'),
+    ],
+    # style={
+    #      'width':'50%',
+    #      'margin':'auto'
+    #      #     'background': colors['background'],
+    #      #     'text':colors['text']
+    #  }
+    )
+)
 
 @app.callback(
     dash.dependencies.Output('rangeslider-output', 'children'),
