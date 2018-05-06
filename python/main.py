@@ -1,11 +1,13 @@
 # -*- coding:utf-8 -*-
 
-import boto3
+import os
 import json
+import boto3
 from boto3.dynamodb.conditions import Key, Attr
-import datetime
+from flask import send_from_directory
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+import datetime
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -17,10 +19,15 @@ dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
 
 
 app = dash.Dash()
+<<<<<<< HEAD
 css_url = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 app.css.append_css({
     "external_url": css_url
 })
+=======
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
+>>>>>>> f04245b7ae335ff55a43b3447de719660774db46
 
 dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
 df = pd.read_csv('./data/test.csv', parse_dates=['datetime'])
@@ -43,6 +50,7 @@ def get_marks_from_start_end(start, end):
 min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
 
+<<<<<<< HEAD
 # colors = {
 #     'background': '#111111',
 #     'text': '#ffffff'
@@ -50,6 +58,55 @@ max=unix_time_millis(df['datetime'].max())
 
 app.layout = html.Div(
     html.Div([html.H3("Neat H3")], className='col-sm-4' ),
+=======
+
+def graph1(dcc):
+    return dcc.Graph(
+        id='example-graph',
+        figure={
+            'data': [
+                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
+                {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
+            ],
+            'layout': {
+                'title': 'Graph 1',
+                'xaxis' : dict(
+                    title='x Axis',
+                    titlefont=dict(
+                        family='Courier New, monospace',
+                        size=20,
+                        color='#7f7f7f'
+                    )),
+                'yaxis' : dict(
+                    title='y Axis',
+                    titlefont=dict(
+                        family='Helvetica, monospace',
+                        size=20,
+                        color='#7f7f7f'
+                    ))
+            }
+        }
+    )
+
+app.layout = html.Div([
+    html.Link(
+        rel='stylesheet',
+        href='/static/stylesheet.css'
+    ),
+    html.Link(
+        rel='stylesheet',
+        href='/static/bootstrap.css'
+    ),
+    html.H1(children='dashboard',
+            className='twelve columns'),
+    
+    html.Div([ # row
+        html.Div([
+            html.Div(id='example-graph'),
+            graph1(dcc)
+        ], className='six columns'),
+        
+>>>>>>> f04245b7ae335ff55a43b3447de719660774db46
     html.Div([
         dcc.Graph(id='indicator-graphic'),
         dcc.RangeSlider(
@@ -59,6 +116,7 @@ app.layout = html.Div(
             value=[min, max],
             marks=get_marks_from_start_end(df['datetime'].min(), df['datetime'].max()),
         ),
+<<<<<<< HEAD
         html.Div(id='rangeslider-output'),
     ],
     # style={
@@ -69,6 +127,20 @@ app.layout = html.Div(
     #  }
     )
 )
+=======
+        html.Div(id='rangeslider-output')
+    ], className='six columns', style={'padding':'16px'})
+    ], className='row')
+], style={ # 'background-color': '#002b36'
+})
+
+
+@app.server.route('/static/<path:path>')
+def static_file(path):
+    static_folder = os.path.join(os.getcwd(), 'static')
+    print(static_folder)
+    return send_from_directory(static_folder, path)
+>>>>>>> f04245b7ae335ff55a43b3447de719660774db46
 
 @app.callback(
     dash.dependencies.Output('rangeslider-output', 'children'),
