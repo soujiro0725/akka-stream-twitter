@@ -69,11 +69,6 @@ object DBClient {
   }
 
   /**
-    * Map(
-    *     
-    * )
-    * 
-    * 
     * 
     */
   def put(tableName: String, tweetTuple: TweetTuple) {

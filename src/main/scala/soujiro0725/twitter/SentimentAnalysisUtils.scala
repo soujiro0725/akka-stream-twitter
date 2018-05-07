@@ -12,6 +12,9 @@ import scala.collection.mutable.ListBuffer
 
 object SentimentAnalysisUtils {
 
+  /**
+    * TODO remove later
+    */
   trait SENTIMENT_TYPE
   case object VERY_NEGATIVE extends SENTIMENT_TYPE
   case object NEGATIVE extends SENTIMENT_TYPE
