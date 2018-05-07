@@ -22,7 +22,7 @@ import scala.collection.JavaConverters._
   * 
   * aws dynamodb list-tables --endpoint-url http://localhost:7777
   * 
-  * aws dynamodb put-item --endpoint-url http://localhost:7777 --table-name twitter-sentiment --item '{"testId":"1"}'
+  * aws dynamodb put-item --endpoint-url http://localhost:7777 --table-name twitter-sentiment3 --item '{"testId":"1"}'
 
   * aws dynamodb scan --table-name twitter-sentiment3 --endpoint-url http://localhost:7777
   */
@@ -35,7 +35,7 @@ object DBClient {
   val client = DynamoClient(settings)
 
   val keyCol = "userId"
-  val sortCol = "sentiment"
+  val sortCol = "datetime" //unix time (String)
 
   def S(s: String) = new AttributeValue().withS(s)
   def N(n: Int) = new AttributeValue().withN(n.toString)
@@ -55,7 +55,7 @@ object DBClient {
       )
       .withAttributeDefinitions(
         new AttributeDefinition().withAttributeName(keyCol).withAttributeType("S"),
-        new AttributeDefinition().withAttributeName(sortCol).withAttributeType("N")
+        new AttributeDefinition().withAttributeName(sortCol).withAttributeType("S")
       )
       .withProvisionedThroughput(
         new ProvisionedThroughput().withReadCapacityUnits(10L).withWriteCapacityUnits(10L)
@@ -69,18 +69,29 @@ object DBClient {
   }
 
   /**
-    * 
+    * Map(
+    *     
+    * )
     * 
     * 
     * 
     */
-  def put(tableName: String, data: List[String]) {
+  def put(tableName: String, tweetTuple: TweetTuple) {
     var batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(
       Map(
         tableName ->
           List(
-            new WriteRequest(new PutRequest().withItem((keyMap("B", 0) + ("data" -> S(data(0)))).asJava)),
-            new WriteRequest(new PutRequest().withItem((keyMap("B", 1) + ("data" -> S(data(1)))).asJava)),
+            new WriteRequest(
+              new PutRequest(
+                Map(
+                  "userId" -> new AttributeValue(tweetTuple.tweet.user.getScreenName),
+                  "statusId" -> new AttributeValue(tweetTuple.tweet.statusId.toString),
+                  "datetime" -> new AttributeValue(tweetTuple.tweet.datetime),
+                  "sentiment" -> new AttributeValue(tweetTuple.sentiment.sentimentValue.toString)
+                ).asJava
+              )
+            )//,
+            //new WriteRequest(new PutRequest().withItem((keyMap("B", 1) + ("data" -> S(data(1)))).asJava)),
           ).asJava
       ).asJava
     )

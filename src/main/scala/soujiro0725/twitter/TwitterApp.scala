@@ -9,8 +9,9 @@ import scala.concurrent.duration._
 import twitter4j.{User, Status}
 import com.soujiro0725.twitter.SentimentAnalysisUtils._
 
-case class Tweet(statusId: Long, user: User, uris: Iterable[String])
-case class TweetSentiment(sentimentType: SENTIMENT_TYPE)
+case class Tweet(statusId: Long, user: User, uris: Iterable[String], datetime: String)
+case class TweetSentiment(sentimentValue: Double)
+case class TweetTuple(tweet: Tweet, sentiment: TweetSentiment)
 
 trait TwitterApp {
 
@@ -31,15 +32,15 @@ trait TwitterApp {
       val sinks = new Sinks
 
       val streamQueue = source
-        .via(flows.analyzeSentiment)
-        .to(sinks.sink2)
+        .via(flows.analyzeFlow)
+        .to(sinks.dbSink)
         .run()
 
       def onStatus(status: Status): Unit = {
         streamQueue.offer(status)
       }
 
-      twitterAPI.streamByTrack(Seq("nba", "nytimes"), new StatusListenerImpl(Some(onStatus)))
+      twitterAPI.streamByTrack(Seq("btc", "virtual currency", "bitcoin"), new StatusListenerImpl(Some(onStatus)))
 
       Await.result(actorSystem.whenTerminated, Duration.Inf)
     }
@@ -47,14 +48,16 @@ trait TwitterApp {
 
   class Flows {
 
-    val func1 = Flow.fromFunction((s: Status) => {
-      val uris = s.getExtendedMediaEntities.map { me => me.getMediaURLHttps }.toSeq
-      Tweet(s.getId, s.getUser, uris)
-    })
+    // val func1 = Flow.fromFunction((s: Status) => {
+    //   val uris = s.getExtendedMediaEntities.map { me => me.getMediaURLHttps }.toSeq
+    //   Tweet(s.getId, s.getUser, uris)
+    // })
 
-    val analyzeSentiment = Flow.fromFunction((s: Status) => {
+    val analyzeFlow = Flow.fromFunction((s: Status) => {
       val st = detectSentiment(s.getText)
-      TweetSentiment(st)
+      val uris = s.getExtendedMediaEntities.map { me => me.getMediaURLHttps }.toSeq
+      val datetime = s.getCreatedAt.getTime().toString
+      TweetTuple(Tweet(s.getId, s.getUser, uris, datetime), TweetSentiment(st))
     })
   }
 
@@ -65,14 +68,15 @@ trait TwitterApp {
       logger.info(s"https://twitter.com/${mt.user.getScreenName}/status/${mt.statusId}, ${mt.uris}")
     }
 
-    val sink2 = Sink.foreach[TweetSentiment] { mt =>
+    val dbSink = Sink.foreach[TweetTuple] { obj =>
       val tableName = "twitter-sentiment3"
       val result = DBClient.createTable(tableName)
-      println("printing result of creating tables...")
-      println(result)
-      println(DBClient.listTable())
-      DBClient.put(tableName, List("ggg", mt.sentimentType.toString))
-      //logger.info(s"${mt.sentimentType.toString}")
+      // println("printing result of creating tables...")
+      // println(result)
+      // println(DBClient.listTable())
+
+      DBClient.put(tableName, obj)
+      //logger.info(s"${obj.sentimentValue.toString}")
     }
 
   }

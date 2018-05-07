@@ -26,7 +26,10 @@ object SentimentAnalysisUtils {
     props
   }
 
-  def detectSentiment(message: String): SENTIMENT_TYPE = {
+  /**
+    * return Double
+    */
+  def detectSentiment(message: String): Double = {
     val pipeline = new StanfordCoreNLP(nlpProps)
     var annotation = pipeline.process(message)
     var sentiments: ListBuffer[Double] = ListBuffer()
@@ -69,15 +72,17 @@ object SentimentAnalysisUtils {
     // println("debug: avg: " + averageSentiment)
     // println("debug: weighted: " + weightedSentiment)
 
-    weightedSentiment match {
-      case s if s <= 0.0 => NOT_UNDERSTOOD
-      case s if s < 1.0 => VERY_NEGATIVE
-      case s if s < 2.0 => NEGATIVE
-      case s if s < 3.0 => NEUTRAL
-      case s if s < 4.0 => POSITIVE
-      case s if s < 5.0 => VERY_POSITIVE
-      case s if s > 5.0 => NOT_UNDERSTOOD
-    }
+    // weightedSentiment match {
+    //   case s if s <= 0.0 => NOT_UNDERSTOOD
+    //   case s if s < 1.0 => VERY_NEGATIVE
+    //   case s if s < 2.0 => NEGATIVE
+    //   case s if s < 3.0 => NEUTRAL
+    //   case s if s < 4.0 => POSITIVE
+    //   case s if s < 5.0 => VERY_POSITIVE
+    //   case s if s > 5.0 => NOT_UNDERSTOOD
+    // }
+
+    weightedSentiment
   }
 
 }
