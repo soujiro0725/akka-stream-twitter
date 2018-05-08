@@ -82,7 +82,8 @@ object DBClient {
                   "userId" -> new AttributeValue(tweetTuple.tweet.user.getScreenName),
                   "statusId" -> new AttributeValue(tweetTuple.tweet.statusId.toString),
                   "datetime" -> new AttributeValue(tweetTuple.tweet.datetime),
-                  "sentiment" -> new AttributeValue(tweetTuple.sentiment.sentimentValue.toString)
+                  "sentiment" -> new AttributeValue(tweetTuple.sentiment.sentimentValue.toString),
+                  "rt" -> new AttributeValue(tweetTuple.tweet.rt.toString)
                 ).asJava
               )
             )//,

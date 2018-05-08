@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import twitter4j.{User, Status}
 import com.soujiro0725.twitter.SentimentAnalysisUtils._
 
-case class Tweet(statusId: Long, user: User, uris: Iterable[String], datetime: String)
+case class Tweet(statusId: Long, user: User, uris: Iterable[String], datetime: String, rt: Int)
 case class TweetSentiment(sentimentValue: Double)
 case class TweetTuple(tweet: Tweet, sentiment: TweetSentiment)
 
@@ -57,7 +57,7 @@ trait TwitterApp {
       val st = detectSentiment(s.getText)
       val uris = s.getExtendedMediaEntities.map { me => me.getMediaURLHttps }.toSeq
       val datetime = s.getCreatedAt.getTime().toString
-      TweetTuple(Tweet(s.getId, s.getUser, uris, datetime), TweetSentiment(st))
+      TweetTuple(Tweet(s.getId, s.getUser, uris, datetime, s.getRetweetCount), TweetSentiment(st))
     })
   }
 
@@ -71,9 +71,6 @@ trait TwitterApp {
     val dbSink = Sink.foreach[TweetTuple] { obj =>
       val tableName = "twitter-sentiment3"
       val result = DBClient.createTable(tableName)
-      // println("printing result of creating tables...")
-      // println(result)
-      // println(DBClient.listTable())
 
       DBClient.put(tableName, obj)
       //logger.info(s"${obj.sentimentValue.toString}")

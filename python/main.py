@@ -138,8 +138,8 @@ def update_graph(datetime_value_list):
     print(dff.head())
     return {
         'data': [go.Scatter(
-            x=dff['statusId'],
-            y=dff['sentiment'],
+            x=dff['sentiment'],
+            y=dff['rt'],
             text=dff['userId'],
             mode='markers',
             marker={
@@ -150,11 +150,11 @@ def update_graph(datetime_value_list):
         )],
         'layout': go.Layout(
             xaxis={
-                'title': 'user',
+                'title': 'sentiment',
                 'type': 'linear'
             },
             yaxis={
-                'title': 'sentiment',
+                'title': 'RT',
                 'type': 'linear'
             },
             margin={'l': 40, 'b': 40, 't': 10, 'r': 0},

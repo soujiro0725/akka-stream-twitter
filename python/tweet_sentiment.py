@@ -31,9 +31,11 @@ class TweetSentiment(object):
         with open('./data/result.csv', 'w') as f:
             writer = csv.writer(f, lineterminator='\n')
             for item in arry:
+                # TODO make conditional if each attribute is stored.
                 writer.writerow([item['userId'].get('S'),
                                  item['statusId'].get('S'),
                                  item['datetime'].get('S'),
+                                 item['rt'].get('S'),                                 
                                  item['sentiment'].get('S')
                 ])
 
