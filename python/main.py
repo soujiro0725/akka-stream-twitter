@@ -2,8 +2,6 @@
 
 import os
 import json
-import boto3
-from boto3.dynamodb.conditions import Key, Attr
 from flask import send_from_directory
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -13,9 +11,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-
-dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
-# print(dynamodb.describe_table(TableName='twitter-sentiment3'))
 
 
 app = dash.Dash()
