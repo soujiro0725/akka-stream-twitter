@@ -18,14 +18,23 @@ app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 
 
-dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
-df = pd.read_csv('./data/test.csv', parse_dates=['datetime'])
+# dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
+df = pd.read_csv('./data/result.csv') #, parse_dates=['datetime'])
+df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
+# print(df.head())
 
 epoch = datetime.datetime.utcfromtimestamp(0)
+
 def unix_time_millis(dt):
+    """
+    """
     return (dt - epoch).total_seconds() #* 1000.0
 
 def get_marks_from_start_end(start, end):
+    """
+    start
+    end
+    """
     ''' Returns dict with one item per month
     {1440080188.1900003: '2015-08',
     '''
@@ -33,8 +42,9 @@ def get_marks_from_start_end(start, end):
     current = start
     while current <= end:
         result.append(current)
-        current += relativedelta(months=1)
+        current += relativedelta(seconds=1)
     return {unix_time_millis(m):(str(m.strftime('%Y-%m'))) for m in result}
+
 
 min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
@@ -106,7 +116,6 @@ app.layout = html.Div([
 @app.server.route('/static/<path:path>')
 def static_file(path):
     static_folder = os.path.join(os.getcwd(), 'static')
-    print(static_folder)
     return send_from_directory(static_folder, path)
 
 
@@ -114,7 +123,7 @@ def static_file(path):
     dash.dependencies.Output('rangeslider-output', 'children'),
     [dash.dependencies.Input('datetime--slider', 'value')])
 def update_output(value):
-    return 'time range is  "{} - {}"'.format(datetime.datetime.fromtimestamp(value[0]),
+    return 'time range is "{} - {}"'.format(datetime.datetime.fromtimestamp(value[0]),
                                              datetime.datetime.fromtimestamp(value[1]))
 
 @app.callback(
@@ -123,8 +132,10 @@ def update_output(value):
 def update_graph(datetime_value_list):
     min = datetime.datetime.fromtimestamp(datetime_value_list[0])
     max = datetime.datetime.fromtimestamp(datetime_value_list[1])
-    dff = df[(min <= df['datetime']) & (df['datetime'] <= max)]
-    
+    # TODO
+    # dff = df[(min <= df['datetime']) & (df['datetime'] <= max)]
+    dff = df
+    print(dff.head())
     return {
         'data': [go.Scatter(
             x=dff['statusId'],
@@ -134,7 +145,7 @@ def update_graph(datetime_value_list):
             marker={
                 'size': 15,
                 'opacity': 0.5,
-                'line': {'width': 0.5, 'color': 'white'}
+                'line': {'width': 0.5, 'color': 'black'}
             }
         )],
         'layout': go.Layout(
