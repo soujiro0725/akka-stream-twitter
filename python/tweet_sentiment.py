@@ -5,7 +5,6 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
 dynamodb = boto3.client('dynamodb', endpoint_url='http://localhost:7777')
-# print(dynamodb.describe_table(TableName='twitter-sentiment3'))
 pp = pprint.PrettyPrinter(indent=4)
 
 class TweetSentiment(object):
