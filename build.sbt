@@ -1,10 +1,13 @@
-lazy val root = (project in file(".")).
-  settings(inThisBuild(List(
-      organization := "com.example",
-      scalaVersion := "2.12.4"
-    )),
-    name := "akka-stream-twitter"
+lazy val tweetCollector = (project in file("."))
+  .enablePlugins(JavaAppPackaging)
+  .settings(inThisBuild(List(
+    organization := "com.soujiro0725",
+    name := "akka-stream-twitter",
+    version := "0.1.0",
+    scalaVersion := "2.12.4"
+  ))
   )
+
 
 val akka_version = "2.4.19"
 val twitter_version = "4.0.5"
@@ -30,5 +33,9 @@ libraryDependencies ++= Seq(
   "edu.stanford.nlp" % "stanford-corenlp" % stanford_nlp_version classifier "models",
 
   "com.lightbend.akka" %% "akka-stream-alpakka-dynamodb" % alpakka_version
-
 )
+
+
+maintainer in Docker := "soujiro0725"
+dockerBaseImage in Docker := "java:8-jdk-alpine"
+dockerExposedPorts in Docker := Seq(8080, 8080)

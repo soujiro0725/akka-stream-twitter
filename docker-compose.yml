@@ -4,4 +4,6 @@ services:
         image: soichi777/dynamodb_local
         ports: 
             - "7777:8000"
+    tweetcollector:
+        image: tweetcollector
 
