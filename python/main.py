@@ -12,11 +12,9 @@ import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
 
-
 app = dash.Dash()
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
-
 
 # dateparse = lambda dates : pd.datetime(dates, '%Y%m%dT%H:%M')
 df = pd.read_csv('./data/result.csv') #, parse_dates=['datetime'])
@@ -55,11 +53,8 @@ bg_layout = go.Layout(
 )
 
 earth_image = go.Layout(
-    images=[
-        dict(
-            source='static/earth_frame.gif'
-        )
-    ]
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)',
 )
 
 def graph1(dcc):
@@ -102,7 +97,7 @@ app.layout = html.Div([
     ),
     html.Link(
         rel='stylesheet',
-        href='/static/custom.css'
+        href='/static/custom.css?version=3.3'
     ),
     html.H1(children='dashboard',
             className='twelve columns'
@@ -177,10 +172,11 @@ def update_graph(datetime_value_list):
             margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
             hovermode='closest'
         ),
-        'layout': bg_layout,
-        'images': earth_image
+        #'layout': bg_layout,
+        'layout': earth_image
     }
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
