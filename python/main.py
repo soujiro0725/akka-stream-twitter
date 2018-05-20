@@ -49,6 +49,18 @@ def get_marks_from_start_end(start, end):
 min=unix_time_millis(df['datetime'].min())
 max=unix_time_millis(df['datetime'].max())
 
+bg_layout = go.Layout(
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)'
+)
+
+earth_image = go.Layout(
+    images=[
+        dict(
+            source='static/earth_frame.gif'
+        )
+    ]
+)
 
 def graph1(dcc):
     return dcc.Graph(
@@ -74,7 +86,8 @@ def graph1(dcc):
                         size=20,
                         color='#7f7f7f'
                     ))
-            }
+            },
+            'layout': bg_layout
         }
     )
 
@@ -87,8 +100,13 @@ app.layout = html.Div([
         rel='stylesheet',
         href='/static/bootstrap.css'
     ),
+    html.Link(
+        rel='stylesheet',
+        href='/static/custom.css'
+    ),
     html.H1(children='dashboard',
-            className='twelve columns'),
+            className='twelve columns'
+    ),
     
     html.Div([ # row
         html.Div([
@@ -109,8 +127,7 @@ app.layout = html.Div([
         html.Div(id='rangeslider-output')
     ], className='six columns', style={'padding':'16px'})
     ], className='row')
-], style={ # 'background-color': '#002b36'
-})
+])
 
 
 @app.server.route('/static/<path:path>')
@@ -159,7 +176,9 @@ def update_graph(datetime_value_list):
             },
             margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
             hovermode='closest'
-        )
+        ),
+        'layout': bg_layout,
+        'images': earth_image
     }
 
 
