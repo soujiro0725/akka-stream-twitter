@@ -71,7 +71,7 @@ trait TwitterApp {
     val dbSink = Sink.foreach[TweetTuple] { obj =>
       val tableName = "twitter-sentiment3"
       val result = DBClient.createTable(tableName)
-
+      println("result of creating table is $result")
       DBClient.put(tableName, obj)
       //logger.info(s"${obj.sentimentValue.toString}")
     }

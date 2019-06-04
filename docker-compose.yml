@@ -5,5 +5,13 @@ services:
         ports: 
             - "7777:8000"
     tweetcollector:
+        build: ./target/docker/stage
         image: tweetcollector
+        environment:
+            - JAVA_OPTS
+        depends_on: 
+            - dynamodb
+        links:
+            - dynamodb
+
 

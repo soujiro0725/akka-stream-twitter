@@ -60,7 +60,7 @@ object DBClient {
       .withProvisionedThroughput(
         new ProvisionedThroughput().withReadCapacityUnits(10L).withWriteCapacityUnits(10L)
       )
-
+    println("creating a table...")
     client.single(createTableRequest)
   }
 
